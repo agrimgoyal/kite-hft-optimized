@@ -86,15 +86,38 @@ cp config/config.yaml.example config/config.yaml
 # Edit config/config.yaml with your settings
 ```
 
-### Environment Variables
+### Secure Credential Setup
+
+**🔐 Recommended: Encrypted Credential Storage**
 
 ```bash
+# Interactive setup with AES-256 encryption
+python scripts/setup_credentials.py
+
+# Your credentials will be encrypted and stored securely
+# You'll need a master password to access them
+```
+
+**🔧 Alternative: Environment Variables (for development)**
+
+```bash
+# Copy example file and edit
+cp .env.example .env
+# Edit .env with your credentials
+
+# Or export directly
 export KITE_API_KEY="your_api_key"
 export KITE_API_SECRET="your_api_secret"
 export KITE_USER_ID="your_user_id"
 export KITE_PASSWORD="your_password"
 export KITE_TOTP_SECRET="your_totp_secret"
 ```
+
+**⚠️ Security Notes:**
+- Encrypted storage uses AES-256 encryption with PBKDF2 key derivation
+- Master password is never stored - keep it secure!
+- `.env` files are excluded from Git automatically
+- Never commit real credentials to version control
 
 ## 🚀 Quick Start
 
@@ -272,6 +295,36 @@ WebSocket Pools    | 8MB          | 3 connections
 Tick Storage       | 100MB        | Memory-mapped file
 Strategy Engine    | 5MB          | NumPy arrays
 Total              | 133MB        | Stable under load
+```
+
+## 🔒 Security Features
+
+### Credential Encryption
+- **AES-256 encryption** with Fernet (industry standard)
+- **PBKDF2 key derivation** with 100,000 iterations
+- **Salt-based protection** against rainbow table attacks
+- **Master password** never stored on disk
+
+### File Security
+- Secure file permissions (600) for credential files
+- Comprehensive `.gitignore` to prevent credential leaks
+- Automatic exclusion of sensitive files from version control
+
+### Runtime Security
+- Credentials loaded into memory only when needed
+- No credentials in logs or error messages
+- Secure cleanup on application exit
+
+### Best Practices
+```bash
+# Check credential status
+python scripts/setup_credentials.py
+
+# Update specific credentials
+python scripts/setup_credentials.py
+
+# Reset all credentials (if compromised)
+python scripts/setup_credentials.py --reset
 ```
 
 ## 🔍 Troubleshooting

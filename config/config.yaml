@@ -2,12 +2,14 @@
 # High-performance trading system configuration
 
 # Kite Connect API Configuration
+# SECURITY NOTE: Sensitive credentials are loaded from encrypted storage or environment variables
+# Never put real credentials in this file - it may be committed to version control
 kite:
-  api_key: ""  # Set via environment variable KITE_API_KEY
-  api_secret: ""  # Set via environment variable KITE_API_SECRET
-  user_id: ""  # Set via environment variable KITE_USER_ID
-  password: ""  # Set via environment variable KITE_PASSWORD
-  totp_secret: ""  # Set via environment variable KITE_TOTP_SECRET
+  api_key: ""  # Loaded from encrypted credentials or KITE_API_KEY env var
+  api_secret: ""  # Loaded from encrypted credentials or KITE_API_SECRET env var  
+  user_id: ""  # Loaded from encrypted credentials or KITE_USER_ID env var
+  password: ""  # Loaded from encrypted credentials or KITE_PASSWORD env var
+  totp_secret: ""  # Loaded from encrypted credentials or KITE_TOTP_SECRET env var
   
   # API Rate Limits (per Kite documentation)
   rate_limits:
@@ -113,8 +115,8 @@ notifications:
   # Telegram
   telegram:
     enabled: false
-    token: ""
-    chat_id: ""
+    token: ""  # Loaded from encrypted credentials or KITE_TELEGRAM_TOKEN env var
+    chat_id: ""  # Loaded from encrypted credentials or KITE_TELEGRAM_CHAT_ID env var
   
   # Email
   email:

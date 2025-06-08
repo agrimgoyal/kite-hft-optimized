@@ -14,6 +14,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Import encryption manager (lazy import to avoid circular dependencies)
+_credential_manager = None
+
+def get_credential_manager():
+    """Lazy import of credential manager to avoid circular dependencies"""
+    global _credential_manager
+    if _credential_manager is None:
+        from .encryption import credential_manager
+        _credential_manager = credential_manager
+    return _credential_manager
+
 
 @dataclass
 class KiteConfig:
@@ -172,16 +183,54 @@ class ConfigManager:
         return current_dir / "config" / "config.yaml"
     
     def _merge_env_vars(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """Merge environment variables with YAML configuration"""
-        # Kite API credentials from environment
-        kite_config = config.setdefault('kite', {})
+        """Merge environment variables and encrypted credentials with YAML configuration"""
+        # First, try to load encrypted credentials
+        try:
+            credential_manager = get_credential_manager()
+            if credential_manager.is_configured():
+                encrypted_creds = credential_manager.get_credentials()
+                if encrypted_creds:
+                    logger.debug("Loading credentials from encrypted storage")
+                    kite_config = config.setdefault('kite', {})
+                    
+                    # Map encrypted credentials to config
+                    credential_mappings = {
+                        'api_key': 'api_key',
+                        'api_secret': 'api_secret', 
+                        'user_id': 'user_id',
+                        'password': 'password',
+                        'totp_secret': 'totp_secret'
+                    }
+                    
+                    for cred_key, config_key in credential_mappings.items():
+                        if cred_key in encrypted_creds and encrypted_creds[cred_key]:
+                            kite_config[config_key] = encrypted_creds[cred_key]
+                    
+                    # Handle optional credentials
+                    notifications_config = config.setdefault('notifications', {})
+                    telegram_config = notifications_config.setdefault('telegram', {})
+                    
+                    if 'telegram_token' in encrypted_creds:
+                        telegram_config['token'] = encrypted_creds['telegram_token']
+                    if 'telegram_chat_id' in encrypted_creds:
+                        telegram_config['chat_id'] = encrypted_creds['telegram_chat_id']
+                    
+                else:
+                    logger.warning("Failed to decrypt credentials - they may not be set up")
+            else:
+                logger.info("No encrypted credentials found - using environment variables only")
+        except Exception as e:
+            logger.warning(f"Could not load encrypted credentials: {e}")
         
+        # Then override with environment variables (for development/testing)
         env_mappings = {
             'KITE_API_KEY': ['kite', 'api_key'],
             'KITE_API_SECRET': ['kite', 'api_secret'],
             'KITE_USER_ID': ['kite', 'user_id'],
             'KITE_PASSWORD': ['kite', 'password'],
             'KITE_TOTP_SECRET': ['kite', 'totp_secret'],
+            'KITE_TELEGRAM_TOKEN': ['notifications', 'telegram', 'token'],
+            'KITE_TELEGRAM_CHAT_ID': ['notifications', 'telegram', 'chat_id'],
             'KITE_LOG_LEVEL': ['logging', 'level'],
             'KITE_DEBUG': ['debug', 'enabled'],
         }
@@ -199,6 +248,8 @@ class ConfigManager:
                     current[config_path[-1]] = value.lower() in ('true', '1', 'yes')
                 else:
                     current[config_path[-1]] = value
+                    
+                logger.debug(f"Loaded {env_var} from environment")
         
         return config
     

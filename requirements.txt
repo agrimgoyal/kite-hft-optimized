@@ -5,6 +5,9 @@ pandas>=2.0.0
 PyYAML>=6.0
 pyotp>=2.8.0
 
+# Security and encryption
+cryptography>=41.0.0  # For secure credential encryption
+
 # Performance optimization
 Cython>=0.29.0  # For optional performance enhancements
 numba>=0.57.0   # JIT compilation for numerical code

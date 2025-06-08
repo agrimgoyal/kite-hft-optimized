@@ -15,6 +15,7 @@ from pathlib import Path
 from kiteconnect import KiteConnect
 
 from ..utils.config import config
+from ..utils.encryption import credential_manager
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,16 @@ class KiteAuthenticator:
         # Create token directory if it doesn't exist
         self.token_file.parent.mkdir(parents=True, exist_ok=True)
         
-        # Initialize KiteConnect
+        # Check if credentials are configured
+        if not credential_manager.is_configured() and not self.config.api_key:
+            logger.error("No credentials configured. Please run: python scripts/setup_credentials.py")
+            raise ValueError("No credentials configured")
+        
+        # Initialize KiteConnect with API key from config (loaded from encrypted storage or env)
+        if not self.config.api_key:
+            logger.error("API key not found in configuration")
+            raise ValueError("API key not configured")
+            
         self.kite = KiteConnect(api_key=self.config.api_key)
         
         logger.info("KiteAuthenticator initialized")
