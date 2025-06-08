@@ -36,13 +36,19 @@ def scan_git_history():
     # Exclude patterns (things that look like credentials but aren't)
     safe_patterns = [
         r'password.*=.*"test',  # Test passwords
-        r'password.*=.*"your_',  # Template passwords
+        r'password.*=.*"your_',  # Template passwords  
         r'password.*=.*"password',  # Generic examples
         r'master_password.*=.*getenv',  # Environment variable access
         r'password.*=.*getpass',  # Password input
         r'\.password',  # Object attributes
         r'password:.*Optional',  # Type annotations
         r'password:.*str',  # Type annotations
+        r'api_key.*=.*"abc123',  # Documentation examples
+        r'api_key.*=.*"example',  # Documentation examples
+        r'api_secret.*=.*"abc123',  # Documentation examples
+        r'`api_key.*=',  # Markdown code examples
+        r'- ❌ Real credentials',  # Documentation examples
+        r'\*\*Example:\*\*',  # Documentation examples
     ]
     
     # Get all commits
