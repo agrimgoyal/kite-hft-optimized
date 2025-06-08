@@ -6,6 +6,7 @@ using industry-standard encryption (Fernet/AES-256) with key derivation.
 """
 
 import os
+import sys
 import base64
 import hashlib
 import getpass
@@ -78,11 +79,17 @@ class CredentialEncryption:
         if self.master_password:
             return self.master_password
         
-        # Check environment variable first
+        # Check environment variable first (for automation/production)
         env_password = os.getenv('KITE_MASTER_PASSWORD')
         if env_password:
             logger.debug("Using master password from environment")
             return env_password
+        
+        # Check if we're in a non-interactive environment
+        if not sys.stdin.isatty():
+            logger.error("Master password required but running in non-interactive mode")
+            raise ValueError("Master password not available in non-interactive mode. "
+                           "Set KITE_MASTER_PASSWORD environment variable.")
         
         # Prompt user for password
         try:

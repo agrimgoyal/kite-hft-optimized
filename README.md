@@ -121,6 +121,29 @@ export KITE_TOTP_SECRET="your_totp_secret"
 
 ## 🚀 Quick Start
 
+### New User? Start Here!
+
+**Option 1: Automated Setup (Recommended)**
+```bash
+python scripts/quick_start.py
+# Automated setup in 5 minutes!
+```
+
+**Option 2: Manual Setup**
+```bash
+# Step 1: Install dependencies
+pip install -r requirements.txt
+
+# Step 2: Set up secure credentials
+python scripts/setup_credentials.py
+
+# Step 3: Test auto-login
+python examples/test_auto_login.py
+
+# Step 4: Start trading
+python examples/basic_usage.py
+```
+
 ### Basic Usage
 
 ```python
@@ -325,6 +348,97 @@ python scripts/setup_credentials.py
 
 # Reset all credentials (if compromised)
 python scripts/setup_credentials.py --reset
+```
+
+## ❓ Frequently Asked Questions
+
+### Q: Does encryption/decryption work automatically for login?
+
+**A: Yes!** The system supports multiple auto-login modes:
+
+**Full Auto-Login (No Prompts):**
+```bash
+export KITE_MASTER_PASSWORD="your_master_password"
+python examples/basic_usage.py
+# Starts immediately without any prompts
+```
+
+**Partial Auto-Login (One Password Prompt):**
+```bash
+python examples/basic_usage.py
+# Prompts once for master password, then auto-loads all credentials
+```
+
+**Test Your Auto-Login:**
+```bash
+python examples/test_auto_login.py
+```
+
+### Q: What does a new user need to do?
+
+**A: Just 3 simple steps:**
+
+1. **Quick Setup** (5 minutes):
+   ```bash
+   git clone https://github.com/your-username/kite-hft-optimized.git
+   cd kite-hft-optimized
+   python scripts/quick_start.py
+   ```
+
+2. **Provide Credentials** when prompted:
+   - Kite API Key & Secret
+   - Your Zerodha User ID & Password  
+   - TOTP Secret (2FA key)
+   - Master password (for encryption)
+
+3. **Start Trading:**
+   ```bash
+   python examples/basic_usage.py
+   ```
+
+**That's it!** The system handles everything else automatically.
+
+### Q: How secure is the credential storage?
+
+**A: Bank-level security:**
+- AES-256 encryption (same as banks use)
+- PBKDF2 key derivation (100,000 iterations)
+- Master password never stored anywhere
+- Secure file permissions (600)
+- All sensitive files excluded from Git
+
+### Q: Can I use environment variables instead?
+
+**A: Yes!** Multiple options:
+```bash
+# Option 1: .env file (copy from .env.example)
+cp .env.example .env
+# Edit .env with your credentials
+
+# Option 2: Direct export
+export KITE_API_KEY="your_key"
+export KITE_API_SECRET="your_secret"
+# ... etc
+
+# Option 3: Mixed (encrypted storage + env override)
+export KITE_MASTER_PASSWORD="password"  # For auto-login
+export KITE_DEBUG="true"                # Override config
+```
+
+### Q: What if I forget my master password?
+
+**A: Reset and reconfigure:**
+```bash
+python scripts/setup_credentials.py --reset
+# This will delete encrypted credentials and let you start fresh
+```
+
+### Q: How do I update just one credential?
+
+**A: Use the management script:**
+```bash
+python scripts/setup_credentials.py
+# Choose option 2 to update specific credentials
 ```
 
 ## 🔍 Troubleshooting
