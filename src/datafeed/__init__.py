@@ -1,0 +1,1 @@
+"""High-performance data feed module for real-time market data"""

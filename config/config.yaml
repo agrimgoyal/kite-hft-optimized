@@ -1,0 +1,140 @@
+# Kite HFT Optimized Configuration
+# High-performance trading system configuration
+
+# Kite Connect API Configuration
+kite:
+  api_key: ""  # Set via environment variable KITE_API_KEY
+  api_secret: ""  # Set via environment variable KITE_API_SECRET
+  user_id: ""  # Set via environment variable KITE_USER_ID
+  password: ""  # Set via environment variable KITE_PASSWORD
+  totp_secret: ""  # Set via environment variable KITE_TOTP_SECRET
+  
+  # API Rate Limits (per Kite documentation)
+  rate_limits:
+    http_api: 3  # requests per second
+    historical_api: 2  # requests per second
+    order_placement: 200  # orders per minute
+    max_orders_per_day: 3000
+  
+  # WebSocket Configuration
+  websocket:
+    max_connections: 3
+    max_instruments_per_connection: 3000
+    reconnect_delay: 5  # seconds
+    max_reconnect_attempts: 50
+    ping_interval: 30  # seconds
+
+# Performance Optimization Settings
+performance:
+  # Memory Management
+  buffer_size: 10000  # Number of ticks to buffer
+  ring_buffer_size: 1000000  # Pre-allocated ring buffer size
+  
+  # Threading
+  worker_threads: 4
+  io_threads: 2
+  
+  # Data Processing
+  batch_size: 500  # Batch size for API calls
+  tick_aggregation_interval: 100  # milliseconds
+  
+  # Memory-mapped files for IPC
+  use_mmap: true
+  mmap_size: 100000000  # 100MB
+
+# Trading Configuration
+trading:
+  # Market Hours (IST)
+  market_start: "09:15:00"
+  market_end: "15:30:00"
+  pre_market: "09:00:00"
+  
+  # Trading Parameters
+  default_quantity: 1
+  max_position_size: 1000000  # INR
+  risk_per_trade: 0.02  # 2% of capital
+  
+  # Order Management
+  order_timeout: 30  # seconds
+  order_retry_count: 3
+  order_retry_delay: 1  # seconds
+
+# Data Feed Configuration
+datafeed:
+  # Primary data source
+  primary_source: "websocket"  # websocket or http
+  
+  # Data modes for different instrument categories
+  equity_mode: "quote"  # ltp, quote, full
+  futures_mode: "full"
+  options_mode: "quote"
+  
+  # Subscription Management
+  auto_subscribe: true
+  subscription_batch_size: 100
+  
+  # Data Storage
+  store_ticks: true
+  tick_storage_format: "binary"  # binary or csv
+  max_storage_days: 7
+
+# Risk Management
+risk:
+  # Position Limits
+  max_positions: 20
+  max_sector_exposure: 0.3  # 30% of capital
+  max_single_stock: 0.1  # 10% of capital
+  
+  # Stop Loss
+  default_stop_loss: 0.02  # 2%
+  trailing_stop: true
+  
+  # Circuit Breakers
+  daily_loss_limit: 0.05  # 5% of capital
+  drawdown_limit: 0.1  # 10% of capital
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # File Logging
+  log_to_file: true
+  log_file: "logs/trading.log"
+  max_log_size: 100000000  # 100MB
+  backup_count: 5
+  
+  # Performance Logging
+  performance_logging: true
+  performance_interval: 300  # seconds (5 minutes)
+
+# Notification Settings
+notifications:
+  # Telegram
+  telegram:
+    enabled: false
+    token: ""
+    chat_id: ""
+  
+  # Email
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    username: ""
+    password: ""
+    from_address: ""
+    to_address: ""
+  
+  # System Notifications
+  system:
+    enabled: true
+    level: "WARNING"  # Only warnings and errors
+
+# Development/Debug Settings
+debug:
+  enabled: false
+  profiling: false
+  memory_profiling: false
+  save_raw_ticks: false
+  simulation_mode: false

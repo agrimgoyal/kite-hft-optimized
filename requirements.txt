@@ -1,0 +1,44 @@
+# Core dependencies
+kiteconnect>=4.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+PyYAML>=6.0
+pyotp>=2.8.0
+
+# Performance optimization
+Cython>=0.29.0  # For optional performance enhancements
+numba>=0.57.0   # JIT compilation for numerical code
+
+# Async and networking
+aiohttp>=3.8.0
+websockets>=11.0
+requests>=2.31.0
+
+# Data handling
+h5py>=3.8.0     # For efficient data storage
+tables>=3.8.0   # PyTables for HDF5
+
+# Logging and monitoring
+structlog>=23.0.0  # Structured logging
+psutil>=5.9.0      # System monitoring
+
+# Development and testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+black>=23.0.0      # Code formatting
+isort>=5.12.0      # Import sorting
+mypy>=1.0.0        # Type checking
+flake8>=6.0.0      # Linting
+
+# Optional notification services
+python-telegram-bot>=20.0  # Telegram notifications
+sendgrid>=6.10.0          # Email notifications
+
+# Optional GUI (for development/monitoring)
+streamlit>=1.28.0  # Web-based dashboard
+plotly>=5.17.0     # Interactive charts
+
+# Database support (optional)
+sqlalchemy>=2.0.0  # Database ORM
+redis>=4.5.0       # In-memory cache
